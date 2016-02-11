@@ -1,16 +1,88 @@
 <!DOCTYPE html>
-<html ng-app>
+<html>
 <head>
-    <title>Hello World, AngularJS - ViralPatel.net</title>
+    <title>Employer Cost for Employees with Benefits</title>
+
     <script type="text/javascript" src="/bower_components/angular/angular.min.js"></script>
+    <script type="text/javascript" src="/bower_components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css"></link>
+    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap-theme.min.css"></link>
+    <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.min.css"></link>
  
 </head>
-<body>
-     
-    Write some text in textbox:
-    <input type="text" ng-model="sometext" />
- 
-    <h1>Hello {{ sometext }}</h1>
+<body ng-app="EmployeeBenefitsApp">
+
+    <div ng-controller="EmployeeListCtrl">
+
+    	<div class="row">
+    		<div class="col-md-6 col-md-offset-3">
+		    	<div ng-controller="EmployerCostsCtrl" class="panel panel-default">
+		    		<div class="panel-heading">Employer Cost Breakdown</div>
+		    		<div class="panel-body">
+			    		<p>Annual Salary Cost for Employer: {{getSalaryCost()|currency}}</p>
+			    		<p>Annual Benefits Cost for Employer: {{getBenefitsCost()|currency}}</p>
+			    		<p>Total Annual Cost for Employer: {{getTotalCost()|currency}}</p>
+			    	</div>
+		    	</div>
+		    </div>
+    	</div>
+
+		<a href="javascript:void(0);" class="btn btn-primary" ng-disabled="appSettings.editing" ng-click="!appSettings.editing && addEmployee()"><i class="fa fa-user-plus"></i>&nbsp;&nbsp;ADD EMPLOYEE</a>
+
+	    <div ng-repeat="employee in employeeCollection" ng-controller="EmployeeCtrl">
+	    	<div ng-show="employee.editing">
+
+	    		<div cass="form-goup">
+		    		<label>First Name:</label>
+		    		<input class="form-control" type="text" ng-model="employee.firstName"/>
+		    	</div>
+
+		    	<div cass="form-goup">
+		    		<label>Last Name:</label>
+		    		<input class="form-control" type="text" ng-model="employee.lastName"/>
+		    	</div>
+
+	    		<a href="javascript:void(0);" class="btn btn-success" ng-disabled="!employee.firstName || !employee.lastName" ng-click="employee.firstName && employee.lastName && saveEmployee()"><i class="fa fa-save"></i>&nbsp;&nbsp;SAVE</a>
+	    	</div>
+
+	    	<div ng-hide="employee.editing" ng-controller="DependantListCtrl">
+	    		Name: {{employee.firstName}} {{employee.lastName}}
+	    		<div class="btn-group">
+		    		<a href="javascript:void(0);" class="btn btn-default" ng-disabled="appSettings.editing" ng-click="!appSettings.editing && editEmployee()"><i class="fa fa-pencil"></i>&nbsp;&nbsp;EDIT</a>
+		    		<a href="javascript:void(0);" class="btn btn-default" ng-disabled="appSettings.editing" ng-click="!appSettings.editing && deleteEmployee()"><i class="fa fa-trash"></i>&nbsp;&nbsp;DELETE</a>
+		    		<a href="javascript:void(0);" class="btn btn-default" ng-disabled="appSettings.editing" ng-click="!appSettings.editing && addDependant()"><i class="fa fa-users"></i>&nbsp;&nbsp;ADD DEPENDANT</a>
+		    	</div>
+
+    			<div ng-repeat="dependant in employee.dependants" ng-controller="DependantCtrl">
+    				<div ng-show="dependant.editing">
+			    		<label>First Name:</label>
+			    		<input type="text" ng-model="dependant.firstName"/>
+
+			    		<label>Last Name:</label>
+			    		<input type="text" ng-model="dependant.lastName"/>
+
+			    		<label>Relationship:</label>
+			    		<input type="text" ng-model="dependant.relation"/>
+
+			    		<a href="javascript:void(0);" class="btn btn-success" ng-disabled="!dependant.firstName || !dependant.lastName" ng-click="dependant.firstName && dependant.lastName && saveDependant()"><i class="fa fa-save"></i>&nbsp;&nbsp;SAVE</a>
+			    	</div>
+
+			    	<div ng-hide="dependant.editing">
+			    		Name: {{dependant.firstName}} {{dependant.lastName}} ({{dependant.relation}})
+			    		<div class="btn-group">
+				    		<a href="javascript:void(0);" class="btn btn-default" ng-disabled="appSettings.editing" ng-click="!appSettings.editing && editDependant()"><i class="fa fa-pencil"></i>&nbsp;&nbsp;EDIT</a>
+				    		<a href="javascript:void(0);" class="btn btn-default" ng-disabled="appSettings.editing" ng-click="deleteDependant()"><i class="fa fa-trash"></i>&nbsp;&nbsp;DELETE</a>
+				    	</div>
+			    	</div>
+    			</div>
+	    	</div>
+	    </div>
+	</div>
      
 </body>
+	
+<script type="text/javascript" src="/scripts/employee-benefits-app.js"></script>
+
 </html>
