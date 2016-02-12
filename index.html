@@ -45,8 +45,8 @@
 			    <div ng-repeat="employee in employeeCollection" ng-controller="EmployeeCtrl" class="panel panel-info">
 			    	<div class="panel-heading">
 			    		<div class="clearfix">
-				    		<h3 class="panel-title pull-left" ng-show="employee.id">{{employee.firstName}} {{employee.lastName}}</h3>
-				    		<h3 class="panel-title pull-left" ng-hide="employee.id">New Employee</h3>
+				    		<div class="panel-title pull-left" ng-show="employee.id"><span class="h3"><i class="fa fa-user">&nbsp;</i>{{employee.firstName}} {{employee.lastName}}</span></div>
+				    		<div class="panel-title pull-left" ng-hide="employee.id"><span class="h3"><i class="fa fa-user">&nbsp;</i>New Employee</span></div>
 
 				  			<div class="btn-group pull-right" ng-hide="employee.editing">
 					    		<a href="javascript:void(0);" class="btn btn-xs btn-default" ng-disabled="appSettings.editing" ng-click="!appSettings.editing && editEmployee()" title="EDIT"><i class="fa fa-pencil"></i></a>
