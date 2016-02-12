@@ -41,7 +41,7 @@
 		</div>
 
 		<div class="row">
-			<div class="col-md-8 col-md-offset-2">
+			<div class="col-md-10 col-md-offset-1">
 			    <div ng-repeat="employee in employeeCollection" ng-controller="EmployeeCtrl" class="panel panel-info">
 			    	<div class="panel-heading">
 			    		<div class="clearfix">
@@ -49,8 +49,8 @@
 				    		<h3 class="panel-title pull-left" ng-hide="employee.id">New Employee</h3>
 
 				  			<div class="btn-group pull-right" ng-hide="employee.editing">
-					    		<a href="javascript:void(0);" class="btn btn-default" ng-disabled="appSettings.editing" ng-click="!appSettings.editing && editEmployee()" title="EDIT"><i class="fa fa-pencil"></i></a>
-					    		<a href="javascript:void(0);" class="btn btn-danger" ng-disabled="appSettings.editing" ng-click="!appSettings.editing && deleteEmployee()" title="DELETE"><i class="fa fa-trash"></i></a>
+					    		<a href="javascript:void(0);" class="btn btn-xs btn-default" ng-disabled="appSettings.editing" ng-click="!appSettings.editing && editEmployee()" title="EDIT"><i class="fa fa-pencil"></i></a>
+					    		<a href="javascript:void(0);" class="btn btn-xs btn-danger" ng-disabled="appSettings.editing" ng-click="!appSettings.editing && deleteEmployee()" title="DELETE"><i class="fa fa-trash"></i></a>
 				    		</div>
 				    	</div>
 			    	</div>
@@ -77,17 +77,32 @@
 
 				    	<div ng-hide="employee.editing" ng-controller="DependantListCtrl">
 				    		<div class="row">
-				    			<div class="col-md-4">
-								    <span class="h3">Employee Profile</span>
-				    				<p>Name: {{employee.firstName}} {{employee.lastName}}</p>
-				    				<p>Annual Salary: {{employee.annualSalary | currency}}</p>
-				    				<p>Cost for Benefits: {{employee.benefitsCost | currency}}
+				    			<div class="col-md-5">
+								    <span class="h3">Annual Cost Profile</span>
+				    				<h4 class="row">
+				    					<span class="col-md-8">Annual Salary:</span>
+				    					<span class="col-md-4 text-right">{{employee.annualSalary | currency}}</span>
+				    				</h4>
+				    				<hr/>
+				    				<h4 class="row">
+				    					<span class="col-md-8">Employee Benefits Cost:</span>
+				    					<span class="col-md-4 text-right">{{employee.benefitsCost | currency}}</span>
+				    				</h4>
+				    				<h4 class="row">
+				    					<span class="col-md-8">Dependants Benefits Cost:</span>
+				    					<span class="col-md-4 text-right">{{getDepedantsBenefitsCost() | currency}}</span>
+				    				</h4>
+				    				<hr/>
+				    				<h4 class="row">
+				    					<span class="col-md-8">Total Benefits Cost:</span>
+				    					<span class="col-md-4 text-right">{{getTotalBenefitsCost() | currency}}</span>
+				    				</h4>
 				    			</div>
-				    			<div class="col-md-8">
+				    			<div class="col-md-7">
 				    				<div class="panel panel-default">
 				    					<div class="panel-heading clearfix">
 				    						<h3 class="panel-title pull-left">Dependants</h3>
-				    						<a href="javascript:void(0);" class="btn btn-primary btn-sm pull-right" ng-disabled="appSettings.editing" ng-click="!appSettings.editing && addDependant()"><i class="fa fa-users"></i>&nbsp;&nbsp;ADD DEPENDANT</a>
+				    						<a href="javascript:void(0);" class="btn btn-primary btn-xs pull-right" ng-disabled="appSettings.editing" ng-click="!appSettings.editing && addDependant()"><i class="fa fa-users"></i>&nbsp;&nbsp;ADD DEPENDANT</a>
 				    					</div>
 				    					<div class="panel-body">
 				    						<table class="table table-striped">
@@ -180,8 +195,8 @@
 										    		</span>
 										    		<div class="col-md-3">
 										    			<div class="btn-group pull-right">
-												    		<a href="javascript:void(0);" class="btn btn-sm btn-default" ng-disabled="appSettings.editing" ng-click="!appSettings.editing && editDependant()"><i class="fa fa-pencil"></i></a>
-												    		<a href="javascript:void(0);" class="btn btn-sm btn-danger" ng-disabled="appSettings.editing" ng-click="deleteDependant()"><i class="fa fa-trash"></i></a>
+												    		<a href="javascript:void(0);" class="btn btn-xs btn-default" ng-disabled="appSettings.editing" ng-click="!appSettings.editing && editDependant()"><i class="fa fa-pencil"></i></a>
+												    		<a href="javascript:void(0);" class="btn btn-xs btn-danger" ng-disabled="appSettings.editing" ng-click="deleteDependant()"><i class="fa fa-trash"></i></a>
 											    		</div>
 											    	</div>
 										    	</div>

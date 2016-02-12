@@ -113,6 +113,22 @@ EmployeeBenefitsApp.controller('EmployeeCtrl', ['$scope', 'IdService',
 			$scope.employeeCollection.splice($scope.employeeCollection.indexOf($scope.employee), 1);
 		};
 
+		$scope.getDepedantsBenefitsCost = function(){
+			var total = 0;
+
+			for(var t = 0; t < $scope.employee.dependants.length; t++){
+				if($scope.employee.dependants[t].id !== null){
+					total += $scope.employee.dependants[t].benefitsCost;
+				}
+			}
+
+			return total;
+		};
+
+		$scope.getTotalBenefitsCost = function(){
+			return $scope.employee.benefitsCost + $scope.getDepedantsBenefitsCost();
+		};
+
 		$scope.$watch('employee.editing', function(newVal){
 			$scope.appSettings.editing = newVal;
 		});
