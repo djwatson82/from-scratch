@@ -35,7 +35,7 @@ function Employee(settings){
 	Object.defineProperty(this, "benefitsCost", { get: function () {
 		return baseBenefitsCost * (1 - getDiscount(this.firstName));
 	}});
-};
+}
 
 // Dependant Model
 function Dependant(settings){
@@ -52,12 +52,12 @@ function Dependant(settings){
 	Object.defineProperty(this, "benefitsCost", { get: function () {
 		return baseBenefitsCost * (1 - getDiscount(this.firstName));
 	}});
-};
+}
 
 // Employee List / App controller
 EmployeeBenefitsApp.controller('EmployeeListCtrl', ['$scope',
 	function($scope){
-		'use strict'
+		'use strict';
 
 		$scope.appSettings = {
 			editing:false,
@@ -68,7 +68,7 @@ EmployeeBenefitsApp.controller('EmployeeListCtrl', ['$scope',
 		$scope.employeeCollection = [];
 
 		$scope.addEmployee = function(){
-			$scope.employeeCollection.unshift(new Employee);
+			$scope.employeeCollection.unshift(new Employee());
 		};
 
 		$scope.removeEmployee = function(employee){
@@ -80,7 +80,7 @@ EmployeeBenefitsApp.controller('EmployeeListCtrl', ['$scope',
 // Controller for Employee Item Directive
 EmployeeBenefitsApp.controller('EmployeeCtrl', ['$scope', 'IdService',
 	function($scope, IdService){
-		'use strict'
+		'use strict';
 
 		var ctrl = this;
 
@@ -143,10 +143,10 @@ EmployeeBenefitsApp.controller('EmployeeCtrl', ['$scope', 'IdService',
 // Controller for Dependants List
 EmployeeBenefitsApp.controller('DependantListCtrl', ['$scope',
 	function($scope){
-		'use strict'
+		'use strict';
 
 		$scope.addDependant = function(){
-			$scope.ctrl.employee.dependants.unshift(new Dependant);
+			$scope.ctrl.employee.dependants.unshift(new Dependant());
 		};
 
 		$scope.removeDependant = function(dependant){
@@ -158,7 +158,7 @@ EmployeeBenefitsApp.controller('DependantListCtrl', ['$scope',
 // Controller for Dependant Item Directive
 EmployeeBenefitsApp.controller('DependantCtrl', ['$scope', 'IdService',
 	function($scope, IdService){
-		'use strict'
+		'use strict';
 
 		var ctrl = this;
 
@@ -232,7 +232,7 @@ EmployeeBenefitsApp.directive('dependantItem', function() {
 // Service for generating simple unqiue IDs for any entities
 EmployeeBenefitsApp.factory('IdService', [
 	function(){
-		'use strict'
+		'use strict';
 
 		var currentIdCount = 0;
 
