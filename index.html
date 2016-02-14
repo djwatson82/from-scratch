@@ -6,6 +6,7 @@
     <script type="text/javascript" src="/bower_components/angular/angular.min.js"></script>
     <script type="text/javascript" src="/bower_components/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript" src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/bower_components/lodash/dist/lodash.min.js"></script>
 
     <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css"></link>
     <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap-theme.min.css"></link>
@@ -13,6 +14,7 @@
     <link rel="stylesheet" href="/css/main.css"></link>
  
 </head>
+
 <body ng-app="EmployeeBenefitsApp" ng-controller="EmployeeListCtrl">
 
 	<header>
@@ -20,200 +22,31 @@
 			<div class="col-md-5 col-md-offset-1">
 				<h2>Employer Cost<br/><small>for Employees with Benefits</small></h2>
 			</div>
-	    	<div ng-controller="EmployerCostsCtrl" class="col-md-5">
-	    		<div class="row">
-	    			<h4 class="col-md-7">Annual Salary Cost for Employer:</h4>
-	    			<h4 class="col-md-5 text-right">{{getSalaryCost()|currency}}</h4>
-		    		
-		    		<h4 class="col-md-7">Annual Benefits Cost for Employer:</h4>
-		    		<h4 class="col-md-5 text-right">{{getBenefitsCost()|currency}}</h4>
-		    		
-		    		<h4 class="col-md-7">Total Annual Cost for Employer:</h4>
-		    		<h4 class="col-md-5 text-right">{{getTotalCost()|currency}}</h4>
-	    		</div>
-		    </div>
     	</div>
 	</header>
 
     <div class="container-fluid">
     	<div class="page-header">
-			<a href="javascript:void(0);" class="btn btn-primary" ng-disabled="appSettings.editing" ng-click="!appSettings.editing && addEmployee()"><i class="fa fa-user-plus"></i>&nbsp;&nbsp;ADD EMPLOYEE</a>
+    		<div class="row">
+    			<div class="col-md-6 col-md-offset-1">
+					<a href="javascript:void(0);" class="btn btn-primary" ng-disabled="appSettings.editing" ng-click="!appSettings.editing && addEmployee()"><i class="fa fa-user-plus"></i>&nbsp;&nbsp;ADD EMPLOYEE</a>
+				</div>
+				
+				<div class="form-inline col-md-3 col-md-offset-2">
+					<label>Display Type:</label>
+					<select ng-model="appSettings.displayType" class="form-control" ng-options="key as val + ' Cost' for (key, val) in appSettings.displayTypes"></select>
+				</div>
+			</div>
 		</div>
 
 		<div class="row">
 			<div class="col-md-10 col-md-offset-1">
-			    <div ng-repeat="employee in employeeCollection" ng-controller="EmployeeCtrl" class="panel panel-info">
-			    	<div class="panel-heading">
-			    		<div class="clearfix">
-				    		<div class="panel-title pull-left" ng-show="employee.id"><span class="h3"><i class="fa fa-user">&nbsp;</i>{{employee.firstName}} {{employee.lastName}}</span></div>
-				    		<div class="panel-title pull-left" ng-hide="employee.id"><span class="h3"><i class="fa fa-user">&nbsp;</i>New Employee</span></div>
-
-				  			<div class="btn-group pull-right" ng-hide="employee.editing">
-					    		<a href="javascript:void(0);" class="btn btn-xs btn-default" ng-disabled="appSettings.editing" ng-click="!appSettings.editing && editEmployee()" title="EDIT"><i class="fa fa-pencil"></i></a>
-					    		<a href="javascript:void(0);" class="btn btn-xs btn-danger" ng-disabled="appSettings.editing" ng-click="!appSettings.editing && deleteEmployee()" title="DELETE"><i class="fa fa-trash"></i></a>
-				    		</div>
-				    	</div>
-			    	</div>
-
-			    	<div class="panel-body">
-				    	<div ng-show="employee.editing" class="row">
-			    			<div class="col-md-5">
-					    		<div cass="form-goup">
-						    		<label>First Name:</label>
-						    		<input class="form-control" type="text" ng-model="employee.firstName"/>
-						    	</div>
-						    </div>
-					    	<div class="col-md-5">
-						    	<div cass="form-goup">
-						    		<label>Last Name:</label>
-						    		<input class="form-control" type="text" ng-model="employee.lastName"/>
-						    	</div>
-						    </div>
-						    <div class="col-md-2">
-						    	<label>&nbsp;</label>
-				    			<a href="javascript:void(0);" class="btn btn-block btn-success" ng-disabled="!employee.firstName || !employee.lastName" ng-click="employee.firstName && employee.lastName && saveEmployee()"><i class="fa fa-save"></i>&nbsp;&nbsp;SAVE</a>
-				    		</div>
-				    	</div>
-
-				    	<div ng-hide="employee.editing" ng-controller="DependantListCtrl">
-				    		<div class="row">
-				    			<div class="col-md-5">
-								    <span class="h3">Annual Cost Profile</span>
-				    				<h4 class="row">
-				    					<span class="col-md-8">Annual Salary:</span>
-				    					<span class="col-md-4 text-right">{{employee.annualSalary | currency}}</span>
-				    				</h4>
-				    				<hr/>
-				    				<h4 class="row">
-				    					<span class="col-md-8">Employee Benefits Cost:</span>
-				    					<span class="col-md-4 text-right">{{employee.benefitsCost | currency}}</span>
-				    				</h4>
-				    				<h4 class="row">
-				    					<span class="col-md-8">Dependants Benefits Cost:</span>
-				    					<span class="col-md-4 text-right">{{getDepedantsBenefitsCost() | currency}}</span>
-				    				</h4>
-				    				<hr/>
-				    				<h4 class="row">
-				    					<span class="col-md-8">Total Benefits Cost:</span>
-				    					<span class="col-md-4 text-right">{{getTotalBenefitsCost() | currency}}</span>
-				    				</h4>
-				    			</div>
-				    			<div class="col-md-7">
-				    				<div class="panel panel-default">
-				    					<div class="panel-heading clearfix">
-				    						<h3 class="panel-title pull-left">Dependants</h3>
-				    						<a href="javascript:void(0);" class="btn btn-primary btn-xs pull-right" ng-disabled="appSettings.editing" ng-click="!appSettings.editing && addDependant()"><i class="fa fa-users"></i>&nbsp;&nbsp;ADD DEPENDANT</a>
-				    					</div>
-				    					<div class="panel-body">
-				    						<table class="table table-striped">
-					    						<thead>
-					    							<tr class="row">
-						    							<th class="col-md-5">Dependant</th>
-						    							<th class="col-md-3">Relationship</th>
-						    							<th class="col-md-4">Cost for Benefits</th>
-						    						</tr>
-					    						</thead>
-					    						<tbody>
-					    							<tr ng-repeat="dependant in employee.dependants" ng-controller="DependantCtrl" class="row">
-					    								<td ng-if="!dependant.editing" class="col-md-5">{{dependant.firstName}} {{dependant.lastName}}</td>
-					    								<td ng-if="!dependant.editing" class="col-md-3">{{dependant.relation}}</td>
-					    								<td ng-if="!dependant.editing" class="col-md-4">
-					    									<div class="col-md-6 text-right">{{dependant.benefitsCost | currency}}</div>
-					    									<div class="col-md-6 text-right">
-						    									<div class="btn-group">
-							    									<a href="javascript:void(0);" class="btn btn-xs btn-default" ng-disabled="appSettings.editing" ng-click="!appSettings.editing && editDependant()" title="EDIT"><i class="fa fa-pencil"></i></a>
-														    		<a href="javascript:void(0);" class="btn btn-xs btn-danger" ng-disabled="appSettings.editing" ng-click="deleteDependant()" title="DELETE"><i class="fa fa-trash"></i></a>
-														    	</div>
-														    </div>
-					    								</td>
-					    								<td ng-if="dependant.editing" colspan="3" class="col-md-12">
-					    									<div class="row">
-										    					<div class="col-md-6">
-											    					<div class="form-group">
-															    		<label>First Name:</label>
-															    		<input class="form-control" type="text" ng-model="dependant.firstName"/>
-															    	</div>
-															    </div>
-															    <div class="col-md-6">
-																    <div class="form-group">
-															    		<label>Last Name:</label>
-															    		<input class="form-control" type="text" ng-model="dependant.lastName"/>
-															    	</div>
-															    </div>
-															</div>
-															<div class="row">
-																<div class="col-md-6">
-															    	<div class="form-group">
-															    		<label>Relationship:</label>
-															    		<input class="form-control" type="text" ng-model="dependant.relation"/>
-															    	</div>
-															    </div>
-															    <div class="col-md-3 col-md-offset-3">
-															    	<label>&nbsp;</label>
-															    	<a href="javascript:void(0);" class="btn btn-block btn-success" ng-disabled="!dependant.firstName || !dependant.lastName" ng-click="dependant.firstName && dependant.lastName && saveDependant()"><i class="fa fa-save"></i>&nbsp;&nbsp;SAVE</a>	
-															    </div>
-														    </div>
-					    								</td>
-					    							</tr>
-					    						</tbody>
-				    						</table>
-							    			<!--div ng-repeat="dependant in employee.dependants" ng-controller="DependantCtrl">
-							    				<div ng-show="dependant.editing">
-							    					<div class="row">
-								    					<div class="col-md-6">
-									    					<div class="form-group">
-													    		<label>First Name:</label>
-													    		<input class="form-control" type="text" ng-model="dependant.firstName"/>
-													    	</div>
-													    </div>
-													    <div class="col-md-6">
-														    <div class="form-group">
-													    		<label>Last Name:</label>
-													    		<input class="form-control" type="text" ng-model="dependant.lastName"/>
-													    	</div>
-													    </div>
-													</div>
-													<div class="row">
-														<div class="col-md-6">
-													    	<div class="form-group">
-													    		<label>Relationship:</label>
-													    		<input class="form-control" type="text" ng-model="dependant.relation"/>
-													    	</div>
-													    </div>
-													    <div class="col-md-3 col-md-offset-3">
-													    	<label>&nbsp;</label>
-													    	<a href="javascript:void(0);" class="btn btn-block btn-success" ng-disabled="!dependant.firstName || !dependant.lastName" ng-click="dependant.firstName && dependant.lastName && saveDependant()"><i class="fa fa-save"></i>&nbsp;&nbsp;SAVE</a>	
-													    </div>
-												    </div>
-										    	</div>
-
-										    	<div ng-hide="dependant.editing" class="row">
-										    		<span class="col-md-9">
-										    			<p>Name: {{dependant.firstName}} {{dependant.lastName}}</p>
-									    				<p>Relationship: {{dependant.relation}}</p>
-									    				<p>Cost for Benefits: {{dependant.benefitsCost | currency}}
-										    		</span>
-										    		<div class="col-md-3">
-										    			<div class="btn-group pull-right">
-												    		<a href="javascript:void(0);" class="btn btn-xs btn-default" ng-disabled="appSettings.editing" ng-click="!appSettings.editing && editDependant()"><i class="fa fa-pencil"></i></a>
-												    		<a href="javascript:void(0);" class="btn btn-xs btn-danger" ng-disabled="appSettings.editing" ng-click="deleteDependant()"><i class="fa fa-trash"></i></a>
-											    		</div>
-											    	</div>
-										    	</div>
-							    			</div-->
-				    					</div>
-				    				</div>
-				    			</div>
-				    		</div>
-				    	</div>
-				    </div>
-			    </div>
+			    <div employee-item="employee" employee-parent="employeeCollection" app-settings="appSettings" ng-repeat="employee in employeeCollection"></div>
 		    </div>
 		</div>
 	</div>
+
+	<script type="text/javascript" src="/scripts/employee-benefits-app.js"></script>
      
 </body>
-	
-<script type="text/javascript" src="/scripts/employee-benefits-app.js"></script>
-
 </html>

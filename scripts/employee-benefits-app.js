@@ -1,5 +1,24 @@
 var EmployeeBenefitsApp = angular.module('EmployeeBenefitsApp', []);
 
+var employeeBenefitsCost = 1000;
+var dependantBenefitsCost = 500;
+var payPeriodsPerYear = 26;
+var letterDiscounts = {
+	a: 0.10
+};
+
+// Get discount for name's first letter.
+function getDiscount(name){
+	var discount = 0;
+	
+	if(name){
+		discount = letterDiscounts[name.toLowerCase().substr(0,1)] || 0;	
+	}
+
+	return discount;
+}
+
+// Employee Model
 function Employee(settings){
 	settings = settings || {};
 
@@ -10,14 +29,15 @@ function Employee(settings){
 	this.dependants = settings.dependants || [];
 	this.salary = settings.salary || 2000;
 
-	var baseBenefitsCost = settings.baseBenefitsCost || 1000;
+	var baseBenefitsCost = settings.baseBenefitsCost || employeeBenefitsCost;
 	
-	Object.defineProperty(this, "annualSalary", { get: function () { return this.salary * 26; } });
+	Object.defineProperty(this, "annualSalary", { get: function () { return this.salary * payPeriodsPerYear; } });
 	Object.defineProperty(this, "benefitsCost", { get: function () {
-		return (this.firstName !== null && this.firstName.toLowerCase().substr(0,1) === 'a')? baseBenefitsCost * 0.9 : baseBenefitsCost;
+		return baseBenefitsCost * (1 - getDiscount(this.firstName));
 	}});
 };
 
+// Dependant Model
 function Dependant(settings){
 	settings = settings || {};
 
@@ -27,19 +47,22 @@ function Dependant(settings){
 	this.editing = this.id === null;
 	this.relation = settings.relation || null;
 
-	var baseBenefitsCost = settings.baseBenefitsCost || 500;
+	var baseBenefitsCost = settings.baseBenefitsCost || dependantBenefitsCost;
 	
 	Object.defineProperty(this, "benefitsCost", { get: function () {
-		return (this.firstName !== null && this.firstName.toLowerCase().substr(0,1) === 'a')? baseBenefitsCost * 0.9 : baseBenefitsCost;
+		return baseBenefitsCost * (1 - getDiscount(this.firstName));
 	}});
 };
 
+// Employee List / App controller
 EmployeeBenefitsApp.controller('EmployeeListCtrl', ['$scope',
 	function($scope){
 		'use strict'
 
 		$scope.appSettings = {
-			editing:false
+			editing:false,
+			displayTypes: {annual: 'Annual', payPeriod: 'Pay Period'},
+			displayType: 'annual'
 		};
 
 		$scope.employeeCollection = [];
@@ -47,127 +70,166 @@ EmployeeBenefitsApp.controller('EmployeeListCtrl', ['$scope',
 		$scope.addEmployee = function(){
 			$scope.employeeCollection.unshift(new Employee);
 		};
+
+		$scope.removeEmployee = function(employee){
+			_.remove($scope.employeeCollection, employee);
+		};
 	}
 ]);
 
-EmployeeBenefitsApp.controller('EmployerCostsCtrl', ['$scope',
-	function($scope){
-		'use strict'
-
-		$scope.getSalaryCost = function(){
-			var total = 0;
-			var paychecksPerYear = 26;
-
-			for(var i = 0; i < $scope.employeeCollection.length; i++){
-				if($scope.employeeCollection[i].id !== null){
-					total += $scope.employeeCollection[i].annualSalary;
-				}
-			}
-
-			return total;
-		}
-
-		$scope.getBenefitsCost = function(){
-			var total = 0;
-			var employeeCost = 1000;
-			var dependantCost = 500;
-			var discountForAName = 0.1;
-
-			for(var i = 0; i < $scope.employeeCollection.length; i++){
-				var employee = $scope.employeeCollection[i];
-
-				if(employee.id !== null){
-					total += employee.benefitsCost;
-				}
-
-				for(var t = 0; t < employee.dependants.length; t++){
-					if(employee.dependants[t].id !== null){
-						total += employee.dependants[t].benefitsCost;
-					}
-				}
-			}
-
-			return total;
-		}
-
-		$scope.getTotalCost = function(){
-			return $scope.getSalaryCost() + $scope.getBenefitsCost();
-		};	
-	}
-]);
-
+// Controller for Employee Item Directive
 EmployeeBenefitsApp.controller('EmployeeCtrl', ['$scope', 'IdService',
 	function($scope, IdService){
 		'use strict'
 
-		$scope.saveEmployee = function(){
-			$scope.employee.id = $scope.employee.id || IdService.getNextId();
-			$scope.employee.editing = false;
+		var ctrl = this;
+
+		ctrl.originalData = _.cloneDeep(ctrl.employee);
+
+		ctrl.saveEmployee = function(){
+			ctrl.employee.id = ctrl.employee.id || IdService.getNextId();
+			ctrl.employee.editing = false;
+			ctrl.originalData = _.cloneDeep(ctrl.employee);
 		};
 
-		$scope.editEmployee = function(){
-			$scope.employee.editing = true;
+		ctrl.editEmployee = function(){
+			ctrl.employee.editing = true;
 		};
 
-		$scope.deleteEmployee = function(){
-			$scope.employeeCollection.splice($scope.employeeCollection.indexOf($scope.employee), 1);
+		ctrl.cancelEmployee = function(){
+			if(ctrl.employee.id){
+				ctrl.employee = _.cloneDeep(ctrl.originalData);
+				ctrl.employee.editing = false;
+			} else {
+				$scope.$parent.removeEmployee(ctrl.employee);
+				ctrl.appSettings.editing = false;
+			}
 		};
 
-		$scope.getDepedantsBenefitsCost = function(){
+		ctrl.deleteEmployee = function(){
+			$scope.$parent.removeEmployee(ctrl.employee);
+		};
+
+		ctrl.getSalaryDisplay = function(){
+			return (ctrl.appSettings.displayType === 'annual')? ctrl.employee.annualSalary : ctrl.employee.salary;
+		};
+
+		ctrl.getBenefitsCost = function(){
+			return (ctrl.appSettings.displayType === 'annual')? ctrl.employee.benefitsCost : ctrl.employee.benefitsCost / payPeriodsPerYear;
+		};
+
+		ctrl.getDepedantsBenefitsCost = function(){
 			var total = 0;
 
-			for(var t = 0; t < $scope.employee.dependants.length; t++){
-				if($scope.employee.dependants[t].id !== null){
-					total += $scope.employee.dependants[t].benefitsCost;
+			for(var t = 0; t < ctrl.employee.dependants.length; t++){
+				if(ctrl.employee.dependants[t].id !== null){
+					total += ctrl.employee.dependants[t].benefitsCost;
 				}
 			}
 
-			return total;
+			return (ctrl.appSettings.displayType === 'annual')? total : total / payPeriodsPerYear;
 		};
 
-		$scope.getTotalBenefitsCost = function(){
-			return $scope.employee.benefitsCost + $scope.getDepedantsBenefitsCost();
+		ctrl.getTotalBenefitsCost = function(){
+			return ctrl.getBenefitsCost() + ctrl.getDepedantsBenefitsCost();
 		};
 
-		$scope.$watch('employee.editing', function(newVal){
-			$scope.appSettings.editing = newVal;
+		$scope.$watch('ctrl.employee.editing', function(newVal){
+			ctrl.appSettings.editing = newVal;
 		});
 	}
 ]);
 
+// Controller for Dependants List
 EmployeeBenefitsApp.controller('DependantListCtrl', ['$scope',
 	function($scope){
 		'use strict'
 
 		$scope.addDependant = function(){
-			$scope.employee.dependants.unshift(new Dependant);
+			$scope.ctrl.employee.dependants.unshift(new Dependant);
+		};
+
+		$scope.removeDependant = function(dependant){
+			_.remove($scope.ctrl.employee.dependants, dependant);
 		};
 	}
 ]);
 
+// Controller for Dependant Item Directive
 EmployeeBenefitsApp.controller('DependantCtrl', ['$scope', 'IdService',
 	function($scope, IdService){
 		'use strict'
 
-		$scope.saveDependant = function(){
-			$scope.dependant.id = $scope.dependant.id || IdService.getNextId();
-			$scope.dependant.editing = false;
+		var ctrl = this;
+
+		ctrl.originalData = _.cloneDeep(ctrl.dependant);
+
+		ctrl.saveDependant = function(){
+			ctrl.dependant.id = ctrl.dependant.id || IdService.getNextId();
+			ctrl.dependant.editing = false;
+			
+			ctrl.originalData = _.cloneDeep(ctrl.dependant);
 		};
 
-		$scope.editDependant = function(){
-			$scope.dependant.editing = true;
+		ctrl.cancelDependant = function(){
+			if(ctrl.dependant.id){
+				ctrl.dependant = _.cloneDeep(ctrl.originalData);
+				ctrl.dependant.editing = false;
+			} else {
+				$scope.$parent.removeDependant(ctrl.dependant);
+				ctrl.appSettings.editing = false;
+			}
 		};
 
-		$scope.deleteDependant = function(){
-			$scope.employee.dependants.splice($scope.employee.dependants.indexOf($scope.dependant), 1);
+		ctrl.editDependant = function(){
+			ctrl.dependant.editing = true;
 		};
 
-		$scope.$watch('dependant.editing', function(newVal){
-			$scope.appSettings.editing = newVal;
+		ctrl.deleteDependant = function(){
+			$scope.$parent.removeDependant(ctrl.dependant);
+		};
+
+		ctrl.getBenefitsCost = function(){
+			return (ctrl.appSettings.displayType === 'annual')? ctrl.dependant.benefitsCost : ctrl.dependant.benefitsCost / payPeriodsPerYear;
+		};
+
+		$scope.$watch('ctrl.dependant.editing', function(newVal){
+			ctrl.appSettings.editing = newVal;
 		});
 	}
 ]);
 
+// Directive for Employee Items
+EmployeeBenefitsApp.directive('employeeItem', function() {
+	return {
+		restrict: 'A',
+		templateUrl: '/html/employee-item.html',
+		controller: 'EmployeeCtrl as ctrl',
+		scope: {
+			employee: '=employeeItem',
+			employeeCollection: '=employeeParent',
+			appSettings: '='
+		},
+		bindToController: true
+	};
+});
+
+// Directive for Dependant Items
+EmployeeBenefitsApp.directive('dependantItem', function() {
+	return {
+		restrict: 'A',
+		templateUrl: '/html/dependant-item.html',
+		controller: 'DependantCtrl as ctrl',
+		scope: {
+			dependant: '=dependantItem',
+			dependantCollection: '=dependantParent',
+			appSettings: '='
+		},
+		bindToController: true
+	};
+});
+
+// Service for generating simple unqiue IDs for any entities
 EmployeeBenefitsApp.factory('IdService', [
 	function(){
 		'use strict'
