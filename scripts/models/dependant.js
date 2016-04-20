@@ -4,7 +4,7 @@ EmployeeBenefitsApp.factory('Dependant', function(Person, DEPENDANT_BENEFITS_COS
 		data = data || {};
 		data.baseBenefitsCost = data.baseBenefitsCost || DEPENDANT_BENEFITS_COST;
 
-		Person.extend(this, data);
+		Person.call(this, data);
 
 		this.relation = data.relation || null;
 	}

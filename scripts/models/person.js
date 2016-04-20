@@ -24,10 +24,6 @@ EmployeeBenefitsApp.factory('Person', function(EMPLOYEE_BENEFITS_COST, PAY_PERIO
 		return discount;
 	}
 
-	Person.extend = function(caller, data){
-		return Person.call(caller, data);
-	};
-
 	Person.build = function(data){
 		return new Person(data);
 	};
