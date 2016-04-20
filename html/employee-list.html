@@ -1,0 +1,10 @@
+<div class="row">
+	<div class="col-md-10 col-md-offset-1">
+	    <employee-item
+	    	ng-repeat="employee in $ctrl.employees"
+	    	employee="employee"
+	    	app-settings="$ctrl.appSettings"
+	    	on-delete="$ctrl.removeEmployee(employee)">
+	    </employee-item>
+    </div>
+</div>

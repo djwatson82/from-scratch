@@ -15,38 +15,26 @@
  
 </head>
 
-<body ng-app="EmployeeBenefitsApp" ng-controller="EmployeeListCtrl">
+<body ng-app="EmployeeBenefitsApp">
 
-	<header>
-		<div class="row">
-			<div class="col-md-11 col-md-offset-1">
-				<h2>Employee Benefits Cost</h2>
-			</div>
-    	</div>
-	</header>
+	<application></application>
 
-    <div class="container-fluid">
-    	<div class="page-header">
-    		<div class="row">
-    			<div class="col-md-6 col-md-offset-1">
-					<a href="javascript:void(0);" class="btn btn-primary" ng-disabled="appSettings.editing" ng-click="!appSettings.editing && addEmployee()"><i class="fa fa-user-plus"></i>&nbsp;&nbsp;ADD EMPLOYEE</a>
-				</div>
-				
-				<div class="form-inline col-md-3 col-md-offset-2">
-					<label>Display Type:</label>
-					<select ng-model="appSettings.displayType" class="form-control" ng-options="key as val + ' Cost' for (key, val) in appSettings.displayTypes"></select>
-				</div>
-			</div>
-		</div>
+	<!-- MAIN APPLICATION -->
+	<script type="text/javascript" src="/scripts/app.js"></script>
 
-		<div class="row">
-			<div class="col-md-10 col-md-offset-1">
-			    <div employee-item="employee" employee-parent="employeeCollection" app-settings="appSettings" ng-repeat="employee in employeeCollection"></div>
-		    </div>
-		</div>
-	</div>
+	<!-- MODELS -->
+	<script type="text/javascript" src="/scripts/models/employee.js"></script>
+	<script type="text/javascript" src="/scripts/models/dependant.js"></script>
 
-	<script type="text/javascript" src="/scripts/employee-benefits-app.js"></script>
+	<!-- COMPONENTS -->
+	<script type="text/javascript" src="/scripts/components/application.js"></script>
+	<script type="text/javascript" src="/scripts/components/employee-list.js"></script>
+	<script type="text/javascript" src="/scripts/components/employee-item.js"></script>
+	<script type="text/javascript" src="/scripts/components/dependant-list.js"></script>
+	<script type="text/javascript" src="/scripts/components/dependant-item.js"></script>
+
+	<!-- SERVICES -->
+	<script type="text/javascript" src="/scripts/services/id-service.js"></script>
      
 </body>
 </html>

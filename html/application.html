@@ -1,0 +1,24 @@
+<header>
+	<div class="row">
+		<div class="col-md-11 col-md-offset-1">
+			<h2>Employee Benefits Cost</h2>
+		</div>
+	</div>
+</header>
+
+<div class="container-fluid">
+	<div class="page-header">
+		<div class="row">
+			<div class="col-md-6 col-md-offset-1">
+				<a href="javascript:void(0);" class="btn btn-primary" ng-disabled="$ctrl.appSettings.editing" ng-click="!$ctrl.appSettings.editing && $ctrl.onAddEmployee()"><i class="fa fa-user-plus"></i>&nbsp;&nbsp;ADD EMPLOYEE</a>
+			</div>
+			
+			<div class="form-inline col-md-3 col-md-offset-2">
+				<label>Display Type:</label>
+				<select ng-model="$ctrl.appSettings.displayType" class="form-control" ng-options="key as val + ' Cost' for (key, val) in $ctrl.appSettings.displayTypes"></select>
+			</div>
+		</div>
+	</div>
+
+	<employee-list app-settings="$ctrl.appSettings"></employee-list>
+</div>
