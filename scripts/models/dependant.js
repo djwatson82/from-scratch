@@ -20,9 +20,5 @@ EmployeeBenefitsApp.factory('Dependant', function(Person, DEPENDANT_BENEFITS_COS
 		return discount;
 	}
 
-	Dependant.build = function(data){
-		return new Dependant(data);
-	};
-
 	return Dependant;
 });

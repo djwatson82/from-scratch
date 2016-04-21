@@ -12,9 +12,5 @@ EmployeeBenefitsApp.factory('Employee', function(Person, EMPLOYEE_BENEFITS_COST,
 		Object.defineProperty(this, "annualSalary", { get: function () { return this.salary * PAY_PERIODS_PER_YEAR; } });
 	}
 
-	Employee.build = function(data){
-		return new Employee(data);
-	};
-
 	return Employee;
 });

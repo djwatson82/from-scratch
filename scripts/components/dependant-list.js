@@ -5,7 +5,7 @@ function DependantListCtrl($scope, $element, $attrs, Dependant){
 	var ctrl = this;
 
 	ctrl.addDependant = function(){
-		ctrl.dependants.unshift(Dependant.build());
+		ctrl.dependants.unshift(new Dependant());
 	};
 
 	ctrl.removeDependant = function(dependant){

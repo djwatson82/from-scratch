@@ -7,7 +7,7 @@ function EmployeeListCtrl($scope, $element, $attrs, Employee){
 	ctrl.employees = [];
 
 	ctrl.addEmployee = function(){
-		ctrl.employees.unshift(Employee.build());
+		ctrl.employees.unshift(new Employee());
 	};
 
 	ctrl.removeEmployee = function(employee){

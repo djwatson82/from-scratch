@@ -6,10 +6,11 @@ EmployeeBenefitsApp.factory('Person', function(EMPLOYEE_BENEFITS_COST, PAY_PERIO
 		this.firstName = data.firstName || null;
 		this.lastName = data.lastName || null;
 		this.id = data.id || null;
-		this.baseBenefitsCost = data.baseBenefitsCost;
+		
+		var baseBenefitsCost = data.baseBenefitsCost;
 		
 		Object.defineProperty(this, "benefitsCost", { get: function () {
-			return this.baseBenefitsCost * (1 - getDiscount(this.firstName));
+			return baseBenefitsCost * (1 - getDiscount(this.firstName));
 		}});
 	}
 
@@ -23,10 +24,6 @@ EmployeeBenefitsApp.factory('Person', function(EMPLOYEE_BENEFITS_COST, PAY_PERIO
 
 		return discount;
 	}
-
-	Person.build = function(data){
-		return new Person(data);
-	};
 
 	return Person;
 });
